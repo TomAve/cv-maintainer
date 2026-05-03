@@ -1,0 +1,27 @@
+[project]
+name = "cv-maintainer"
+version = "0.1.0"
+description = "Outil CLI bilingue pour maintenir et faire évoluer un CV avec un agent LLM."
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.40.0",
+    "python-docx>=1.1.0",
+    "PyYAML>=6.0",
+    "rich>=13.0",
+    "click>=8.1",
+]
+
+[project.optional-dependencies]
+# Décommente plus tard pour ajouter d'autres providers.
+# gemini = ["google-genai>=0.1.0"]
+# openai = ["openai>=1.40.0"]
+
+[project.scripts]
+cv = "cv_maintainer.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

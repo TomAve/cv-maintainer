@@ -1,0 +1,179 @@
+# Source de vérité bilingue du CV de Tom Avedissian.
+# Champs avec {fr, en} = textes libres traduits.
+# Les autres champs (dates, noms d'entreprise, technos) sont uniques.
+#
+# Conventions :
+# - 'end: null' signifie "en cours"
+# - chaque bullet a un id unique pour faciliter le ciblage
+# - 'core: true' = bullet à inclure par défaut dans toutes les variantes
+# - 'tags' = mots-clés utilisés par le moteur de ciblage par offre
+
+profile:
+  name: "Tom Avedissian"
+  location: "Montréal, Canada"
+  phone: "+1 514 963 1905"
+  email: "tom.avedissian@outlook.fr"
+  links:
+    - label: "GitHub"
+      url: "https://github.com/TomAve"
+  headline:
+    fr: "Développeur logiciel"
+    en: "Software Developer"
+  summary:
+    fr: ""  # à remplir : 2-3 lignes pour pitcher ton parcours (optionnel)
+    en: ""
+
+experiences:
+  - id: oqlf
+    company: "Office Québécois de la Langue Française"
+    location: "Montréal, Canada"
+    role:
+      fr: "Développeur"
+      en: "Developer"
+    start: "2023-11"
+    end: null
+    bullets:
+      - id: oqlf-1
+        fr: "Développement d'applications Canvas Power Apps et automatisation de processus avec Power Automate."
+        en: "Built Canvas Power Apps applications and automated business processes with Power Automate."
+        tags: [powerapps, power-automate, low-code]
+        core: true
+      - id: oqlf-2
+        fr: "Migration de bases de données SQL et Access vers la plateforme de données Dataverse."
+        en: "Migrated SQL and Access databases to the Dataverse data platform."
+        tags: [sql, dataverse, migration, data]
+        core: true
+      - id: oqlf-3
+        fr: "Développement backend en ASP.NET Core 8, en appliquant les principes de Clean Architecture (séparation des couches) et le pattern Unit of Work."
+        en: "Built backend services in ASP.NET Core 8 applying Clean Architecture (layer separation) and the Unit of Work pattern."
+        tags: [dotnet, csharp, backend, architecture]
+        core: true
+      - id: oqlf-4
+        fr: "Développement frontend avec Angular et TypeScript."
+        en: "Built frontend interfaces with Angular and TypeScript."
+        tags: [angular, typescript, frontend]
+        core: true
+      - id: oqlf-5
+        fr: "Utilisation de différents services Azure : App Service, Service Bus, Key Vault, AD B2C, Blob Storage."
+        en: "Leveraged Azure services including App Service, Service Bus, Key Vault, AD B2C and Blob Storage."
+        tags: [azure, cloud]
+        core: true
+      - id: oqlf-6
+        fr: "Utilisation d'Azure DevOps pour la gestion du code source, le suivi des tickets et les pipelines CI/CD."
+        en: "Used Azure DevOps for source control, ticket tracking and CI/CD pipelines."
+        tags: [azure-devops, ci-cd, git]
+        core: false
+
+  - id: k2geospatial
+    company: "K2Geospatial"
+    location: "Montréal, Canada"
+    role:
+      fr: "Développeur Front-End"
+      en: "Front-End Developer"
+    start: "2021-07"
+    end: "2022-10"
+    bullets:
+      - id: k2-1
+        fr: "Développeur web pour un produit permettant aux clients de concevoir des cartes personnalisées à partir de bases de données internes."
+        en: "Web developer on a product letting customers design custom maps backed by internal databases."
+        tags: [web, frontend, gis]
+        core: true
+      - id: k2-2
+        fr: "Conception de fonctions de personnalisation pour l'API de création de cartes en TypeScript."
+        en: "Designed customization features for the map-building API in TypeScript."
+        tags: [typescript, api, gis]
+        core: true
+      - id: k2-3
+        fr: "Création de composants React pour l'application cartographique afin d'améliorer l'UI et d'ajouter de nouvelles fonctionnalités."
+        en: "Built React components for the mapping application to improve the UI and ship new features."
+        tags: [react, ui, frontend]
+        core: true
+      - id: k2-4
+        fr: "Collaboration dans un environnement agile avec sprints de deux semaines."
+        en: "Collaborated in an agile environment with two-week sprints."
+        tags: [agile, scrum]
+        core: false
+
+  - id: softwords
+    company: "SoftWords Consulting"
+    location: "Montréal, Canada"
+    role:
+      fr: "Développeur Front-End"
+      en: "Front-End Developer"
+    start: "2020-06"
+    end: "2021-03"
+    bullets:
+      - id: sw-1
+        fr: "Développeur front-end dans une startup d'IA explicable pour l'interprétation de bases de données."
+        en: "Front-end developer at an explainable-AI startup focused on database interpretation."
+        tags: [startup, ai, frontend]
+        core: true
+      - id: sw-2
+        fr: "Migration de la base de code de PHP vers le framework React pour améliorer l'évolutivité et la maintenabilité."
+        en: "Migrated the codebase from PHP to React to improve scalability and maintainability."
+        tags: [react, php, migration, refactor]
+        core: true
+
+  - id: bnc
+    company: "Banque Nationale du Canada"
+    location: "Montréal, Canada"
+    role:
+      fr: "Stagiaire Développeur Testeur"
+      en: "Developer/Tester Intern"
+    start: "2018-05"
+    end: "2018-09"
+    bullets:
+      - id: bnc-1
+        fr: "Développement de tests automatisés avec Jest pour la plateforme web de la BNC."
+        en: "Developed automated tests with Jest for the BNC web platform."
+        tags: [testing, jest, qa]
+        core: true
+      - id: bnc-2
+        fr: "Participation à la planification et à l'exécution de sprints d'une semaine, avec estimation des tâches et rédaction de cas de test en environnement agile."
+        en: "Took part in planning and running one-week sprints, with task estimation and test-case authoring in an agile environment."
+        tags: [agile, qa, scrum]
+        core: false
+      - id: bnc-3
+        fr: "Proposition et mise en œuvre d'un POC Applitools, présenté aux équipes pour évaluer son applicabilité à l'automatisation des tests."
+        en: "Proposed and implemented an Applitools POC, presented to teams to evaluate its fit for test automation."
+        tags: [testing, poc, applitools]
+        core: false
+
+projects: []  # à remplir : projets perso, open-source, etc.
+
+education:
+  - id: poly
+    school: "Polytechnique Montréal"
+    location: "Montréal, Canada"
+    degree:
+      fr: "Baccalauréat en génie logiciel"
+      en: "Bachelor of Software Engineering"
+    start: "2015"
+    end: "2020"
+
+skills:
+  languages:
+    - name:
+        fr: "Français"
+        en: "French"
+      level:
+        fr: "Langue maternelle"
+        en: "Native"
+    - name:
+        fr: "Anglais"
+        en: "English"
+      level:
+        fr: "Courant"
+        en: "Fluent"
+  soft:
+    - fr: "Collaboration en équipe"
+      en: "Team collaboration"
+    - fr: "Planification et livraison de projets"
+      en: "Project planning and delivery"
+  technical:
+    # Catégorisé pour un meilleur rendu et un ciblage plus fin par offre
+    languages: ["C#", "Java", "Python", "PHP", "JavaScript", "TypeScript", "HTML", "CSS", "SQL"]
+    frontend: ["React", "Angular", "Redux", "Figma"]
+    backend: [".NET", "ASP.NET Core", "GraphQL"]
+    cloud: ["Azure", "AWS", "Azure DevOps"]
+    tools: ["GitHub", "Jira", "Agile"]
