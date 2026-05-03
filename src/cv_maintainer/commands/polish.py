@@ -44,6 +44,20 @@ modifs cosmétiques juste pour en avoir. Mieux vaut 3 bonnes suggestions que 20
 suggestions inutiles.
 """
 
+REFINE_SYSTEM_PROMPT = """Tu affines la reformulation d'un bullet de CV bilingue FR/EN
+en tenant compte du feedback de l'utilisateur.
+
+Renvoie uniquement un objet JSON :
+{
+  "bullet_id": "...",
+  "current_fr": "...",
+  "current_en": "...",
+  "suggested_fr": "...",
+  "suggested_en": "...",
+  "rationale": "Ce que tu as changé par rapport à la suggestion précédente (1 phrase)"
+}
+"""
+
 
 def _gather_bullets(cv: dict[str, Any]) -> list[dict[str, Any]]:
     bullets = []
@@ -56,6 +70,23 @@ def _gather_bullets(cv: dict[str, Any]) -> list[dict[str, Any]]:
                 "en": b.get("en", ""),
             })
     return bullets
+
+
+def _refine_suggestion(client: Any, sug: dict[str, Any], feedback: str) -> dict[str, Any]:
+    payload = {
+        "bullet_id": sug.get("bullet_id"),
+        "current_fr": sug.get("current_fr"),
+        "current_en": sug.get("current_en"),
+        "previous_suggested_fr": sug.get("suggested_fr"),
+        "previous_suggested_en": sug.get("suggested_en"),
+        "user_feedback": feedback,
+    }
+    result = client.complete_json(
+        [Message(role="user", content=json.dumps(payload, ensure_ascii=False))],
+        system=REFINE_SYSTEM_PROMPT,
+        max_tokens=1024,
+    )
+    return result
 
 
 def _apply_suggestion(cv: dict[str, Any], suggestion: dict[str, Any]) -> bool:
@@ -91,23 +122,36 @@ def run() -> int:
         return 0
 
     applied = 0
+    stopped = False
     for sug in suggestions:
-        console.print(
-            Panel(
-                f"[bold]Bullet :[/bold] {sug.get('bullet_id')}\n"
-                f"[dim]Raison :[/dim] {sug.get('rationale', '')}\n\n"
-                f"[red]- FR :[/red] {sug.get('current_fr')}\n"
-                f"[green]+ FR :[/green] {sug.get('suggested_fr')}\n\n"
-                f"[red]- EN :[/red] {sug.get('current_en')}\n"
-                f"[green]+ EN :[/green] {sug.get('suggested_en')}",
-                border_style="cyan",
-            )
-        )
-        choice = Prompt.ask("Appliquer ?", choices=["o", "n", "stop"], default="n")
-        if choice == "stop":
+        if stopped:
             break
-        if choice == "o" and _apply_suggestion(cv, sug):
-            applied += 1
+        while True:
+            console.print(
+                Panel(
+                    f"[bold]Bullet :[/bold] {sug.get('bullet_id')}\n"
+                    f"[dim]Raison :[/dim] {sug.get('rationale', '')}\n\n"
+                    f"[red]- FR :[/red] {sug.get('current_fr')}\n"
+                    f"[green]+ FR :[/green] {sug.get('suggested_fr')}\n\n"
+                    f"[red]- EN :[/red] {sug.get('current_en')}\n"
+                    f"[green]+ EN :[/green] {sug.get('suggested_en')}",
+                    border_style="cyan",
+                )
+            )
+            choice = Prompt.ask("Appliquer ? [o/n/f/stop]", choices=["o", "n", "f", "stop"], default="n")
+            if choice == "stop":
+                stopped = True
+                break
+            if choice == "o":
+                if _apply_suggestion(cv, sug):
+                    applied += 1
+                break
+            if choice == "n":
+                break
+            if choice == "f":
+                feedback = Prompt.ask("Ton feedback pour l'agent")
+                with console.status("[dim]L'agent affine la suggestion…[/dim]"):
+                    sug = _refine_suggestion(client, sug, feedback)
 
     if applied:
         save_cv(cv)
