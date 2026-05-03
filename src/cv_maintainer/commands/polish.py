@@ -84,7 +84,7 @@ def _refine_suggestion(client: Any, sug: dict[str, Any], feedback: str) -> dict[
     result = client.complete_json(
         [Message(role="user", content=json.dumps(payload, ensure_ascii=False))],
         system=REFINE_SYSTEM_PROMPT,
-        max_tokens=1024,
+        max_tokens=2048,
     )
     return result
 
