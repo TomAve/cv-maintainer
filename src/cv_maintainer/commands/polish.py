@@ -82,7 +82,7 @@ def run() -> int:
         result = client.complete_json(
             [Message(role="user", content=user_payload)],
             system=SYSTEM_PROMPT,
-            max_tokens=4096,
+            max_tokens=8192,
         )
 
     suggestions = result.get("suggestions", [])
@@ -112,7 +112,7 @@ def run() -> int:
     if applied:
         save_cv(cv)
         console.print(
-            f"[green]✔ {applied} suggestion(s) appliquée(s).[/green] "
+            f"[green]{applied} suggestion(s) applied.[/green] "
             "Lance `cv render` pour régénérer les .docx."
         )
     else:

@@ -315,4 +315,5 @@ def render_all(cv: dict[str, Any] | None = None, output_dir: Path | None = None)
     paths = []
     for lang in ("fr", "en"):
         out = output_dir / f"cv_master.{lang}.docx"
-        render(cv, lang, out)
+        paths.append(render(cv, lang, out))
+    return paths

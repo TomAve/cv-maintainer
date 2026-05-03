@@ -88,5 +88,5 @@ def run(offer_path: str, lang: str = "fr", out_name: str | None = None) -> int:
     out_name = out_name or Path(offer_path).stem
     out_path = OUTPUT_DIR / f"cv_{out_name}.{lang}.docx"
     render(variant, lang, out_path)
-    console.print(f"[green]✔ Variante générée :[/green] {out_path}")
+    console.print(f"[green]OK generated:[/green] {out_path}")
     return 0

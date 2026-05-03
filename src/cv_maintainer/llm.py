@@ -178,6 +178,17 @@ class GeminiClient(LLMClient):  # pragma: no cover - exemple
         self._client = genai.Client(api_key=api_key)
         self._model = model
 
+    def _build_prompt(self, messages: list[Message], system: str | None) -> str:
+        parts = []
+        if system:
+            parts.append(f"[System]\n{system}\n")
+        for m in messages:
+            if m.role == "user":
+                parts.append(f"[User]\n{m.content}\n")
+            elif m.role == "assistant":
+                parts.append(f"[Assistant]\n{m.content}\n")
+        return "\n".join(parts)
+
     def chat(
         self,
         messages: list[Message],
@@ -186,22 +197,32 @@ class GeminiClient(LLMClient):  # pragma: no cover - exemple
         max_tokens: int = 2048,
         temperature: float = 0.7,
     ) -> ChatResponse:
-        # Gemini attend un format différent : on aplatit en string.
-        prompt_parts = []
-        if system:
-            prompt_parts.append(f"[Instructions système]\n{system}\n")
-        for m in messages:
-            if m.role == "user":
-                prompt_parts.append(f"[Utilisateur]\n{m.content}\n")
-            elif m.role == "assistant":
-                prompt_parts.append(f"[Assistant]\n{m.content}\n")
-        prompt = "\n".join(prompt_parts)
+        prompt = self._build_prompt(messages, system)
         resp = self._client.models.generate_content(
             model=self._model,
             contents=prompt,
             config={"max_output_tokens": max_tokens, "temperature": temperature},
         )
         return ChatResponse(text=resp.text or "", raw=resp)
+
+    def complete_json(
+        self,
+        messages: list[Message],
+        *,
+        system: str | None = None,
+        max_tokens: int = 2048,
+    ) -> dict[str, Any]:
+        prompt = self._build_prompt(messages, system)
+        resp = self._client.models.generate_content(
+            model=self._model,
+            contents=prompt,
+            config={
+                "max_output_tokens": max_tokens,
+                "temperature": 0.2,
+                "response_mime_type": "application/json",
+            },
+        )
+        return json.loads(resp.text or "{}")
 
 
 # ---------------------------------------------------------------------------

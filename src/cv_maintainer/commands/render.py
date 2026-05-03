@@ -12,5 +12,5 @@ console = Console()
 def run() -> int:
     paths = render_all()
     for p in paths:
-        console.print(f"[green]✔[/green] généré : {p}")
+        console.print(f"[green]OK[/green] generated: {p}")
     return 0
