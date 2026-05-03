@@ -1,135 +1,129 @@
 # cv-maintainer
 
-Petit outil CLI pour maintenir et faire évoluer ton CV bilingue (FR/EN) avec
-un agent LLM. La source de vérité est un fichier `data/cv.yaml` ; les `.docx`
-sont des livrables qu'on régénère à la volée.
+A small CLI tool for maintaining and evolving a bilingual (FR/EN) CV with an
+LLM agent. The single source of truth is `data/cv.yaml`; `.docx` files are
+generated on demand.
 
-## Architecture en bref
+## Architecture
 
 ```
-cv.yaml  (source bilingue)
+cv.yaml  (bilingual source)
    │
-   ├── cv add        → l'agent dialogue avec toi pour ajouter une expérience
-   ├── cv polish     → l'agent relit et propose des reformulations
-   ├── cv target X   → l'agent génère une variante ciblée pour une offre
-   └── cv render     → régénère cv_master.fr.docx et cv_master.en.docx
+   ├── cv add        → agent gathers details and adds a new experience entry
+   ├── cv polish     → agent reviews bullets and suggests reformulations
+   ├── cv target X   → agent generates a tailored variant for a job posting
+   └── cv render     → regenerates cv_master.fr.docx and cv_master.en.docx
 ```
 
-Le LLM est abstrait derrière une interface (`src/cv_maintainer/llm.py`).
-Backend par défaut : **Anthropic Claude**. Pour brancher Gemini/OpenAI, il
-suffit d'installer le SDK correspondant et de changer `LLM_PROVIDER` dans
-`.env`.
+The LLM is abstracted behind a provider interface ([src/cv_maintainer/llm.py](src/cv_maintainer/llm.py)).
+Default backend: **Anthropic Claude**. To switch to Gemini or OpenAI, install
+the corresponding SDK and set `LLM_PROVIDER` in `.env`.
 
-## Installation (en local)
+## Installation
 
 ```bash
-# Pré-requis : Python 3.10+
+# Requires Python 3.10+
 cd cv-maintainer
 
 python -m venv .venv
-source .venv/bin/activate          # Windows : .venv\Scripts\activate
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -e .
 
 cp .env.example .env
-# Édite .env et colle ta clé ANTHROPIC_API_KEY
+# Edit .env and add your ANTHROPIC_API_KEY
 ```
 
-Récupère une clé API Anthropic sur https://console.anthropic.com (premier
-crédit offert pour tester).
+Get an API key at https://console.anthropic.com.
 
-## Utilisation
+## Usage
 
-### Ajouter une expérience ou un projet
+### Add an experience or project
 
 ```bash
 cv add
 ```
 
-L'agent te pose des questions, propose une entrée structurée, tu valides ou
-corriges. Le `cv.yaml` est mis à jour (un backup horodaté est créé).
+The agent asks a few questions, proposes a structured entry, and waits for
+confirmation before updating `cv.yaml` (a timestamped backup is created).
 
-### Régénérer les .docx
+### Regenerate .docx files
 
 ```bash
 cv render
 ```
 
-Génère `outputs/cv_master.fr.docx` et `outputs/cv_master.en.docx`.
+Produces `outputs/cv_master.fr.docx` and `outputs/cv_master.en.docx`.
 
-### Relire et améliorer le style
+### Review and improve style
 
 ```bash
 cv polish
 ```
 
-L'agent relit tes bullets et propose des reformulations, une par une,
-acceptables ou non.
+The agent reviews each bullet and proposes reformulations one at a time.
 
-### Cibler une offre d'emploi
+### Target a job posting
 
 ```bash
-cv target offre.txt --lang fr
+cv target posting.txt --lang fr
 ```
 
-L'agent lit `offre.txt`, sélectionne les bullets pertinents, génère
-`outputs/cv_offre.fr.docx`.
+The agent reads `posting.txt`, selects relevant bullets, and generates
+`outputs/cv_posting.fr.docx`.
 
-## Coûts
+## API costs
 
-Tu paies les tokens consommés à l'API. Estimation par session :
+This tool calls the LLM API directly — there is no subscription. Costs are
+billed per token by Anthropic (or whichever provider is configured).
 
-| Modèle             | Coût typique  |
-| ------------------ | ------------- |
-| Claude Sonnet 4.6  | 0,05 – 0,15 € |
-| Claude Haiku 4.5   | 0,01 – 0,03 € |
+Typical cost per session is well under $0.10 with Claude Sonnet, and
+negligible with Claude Haiku. For reference pricing, see
+https://www.anthropic.com/pricing.
 
-Sur un mois normal : **moins de 1 € au total**. Pas d'abonnement, pas de
-minimum, tu paies à l'usage.
-
-## Structure du projet
+## Project structure
 
 ```
 cv-maintainer/
 ├── pyproject.toml
 ├── .env.example
 ├── data/
-│   ├── cv.yaml          ← source de vérité bilingue
-│   └── style.md         ← mémoire de style de l'agent
-├── outputs/             ← .docx générés (gitignore-ables)
-├── templates/           ← réservé pour de futurs templates Word
+│   ├── cv.yaml          ← bilingual source of truth
+│   └── style.md         ← agent style memory
+├── outputs/             ← generated .docx files (gitignored)
+├── templates/           ← reserved for future Word templates
 └── src/cv_maintainer/
-    ├── cli.py           ← point d'entrée `cv <commande>`
-    ├── config.py        ← chargement .env, paths
-    ├── llm.py           ← adaptateur provider-agnostic
-    ├── store.py         ← lecture/écriture cv.yaml
+    ├── cli.py           ← entry point: `cv <command>`
+    ├── config.py        ← .env loading, paths
+    ├── llm.py           ← provider-agnostic LLM adapter
+    ├── store.py         ← cv.yaml read/write
     ├── renderer.py      ← YAML → .docx
-    └── commands/        ← une commande par fichier
+    └── commands/        ← one file per command
         ├── add.py
         ├── polish.py
         ├── render.py
         └── target.py
 ```
 
-## Roadmap idées
+## Roadmap
 
-- `cv chat` — mode conversationnel libre (au-delà de l'ajout).
-- Lecture du `style.md` injectée automatiquement dans tous les prompts.
-- Conservation des commentaires YAML (passage à `ruamel.yaml`).
-- Templates Word visuels (via `docxtpl`) pour des designs custom.
-- Export PDF en plus du .docx.
-- Import depuis LinkedIn (parsing du PDF d'export).
+- `cv chat` — free conversational mode beyond structured entry.
+- Auto-inject `style.md` into all prompts.
+- Preserve YAML comments (migrate to `ruamel.yaml`).
+- Visual Word templates via `docxtpl`.
+- PDF export alongside .docx.
+- LinkedIn import (PDF export parsing).
 
-## Changer de provider LLM
+## Switching LLM provider
 
-Édite `.env` :
+Edit `.env`:
 
 ```bash
 LLM_PROVIDER=gemini
 LLM_MODEL=gemini-2.5-flash
-GEMINI_API_KEY=ta_clé
+GEMINI_API_KEY=your_key
 ```
 
-Puis installe le SDK : `pip install google-genai`.
+Then install the SDK: `pip install google-genai`.
 
-Le code `GeminiClient` est déjà câblé dans `llm.py` ; tu peux ajouter
-d'autres providers en suivant le même patron.
+The `GeminiClient` class is already wired in [src/cv_maintainer/llm.py](src/cv_maintainer/llm.py);
+additional providers can be added following the same pattern.
